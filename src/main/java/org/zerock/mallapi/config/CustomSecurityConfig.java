@@ -1,4 +1,4 @@
-package com.yourpackage.config;
+package org.zerock.mallapi.config;
 
 import java.util.Arrays;
 
@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -22,9 +27,24 @@ public class CustomSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         log.info("----------------------------<Security Config>---------------------------------------");
 
+        // p302
+        // 1. http.cors : cors 정책 적용
+        http.cors(httpSecurityCorsConfigurer -> {
+           httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
+        });
+
+        // 2. 세션 사용하지 않음
+        http.sessionManagement(sessionConfig ->
+                sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // 3. CSRF 비활성화
+        http.csrf(config-> config.disable());
+
         return http.build();
     }
 
+    //p302
+    // Spring Boot에서 CORS 정책을 글로벌하게 적용하는 설정
     @Bean
     public CorsConfigurationSource corsConfigurationSource (){
 
@@ -39,5 +59,13 @@ public class CustomSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    // p303
+    // 비밀번호 인코딩
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+
+        return new BCryptPasswordEncoder();
     }
 }
