@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.zerock.mallapi.dto.MemberDTO;
 
 import com.google.gson.Gson;
+import org.zerock.mallapi.util.JWTUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,8 +35,14 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler  {
         MemberDTO memberDTO = (MemberDTO)authentication.getPrincipal();
         Map<String, Object> claims = memberDTO.getClaims();
 
-        claims.put("accessToken", ""); // 토큰값 저장할 곳 생성
-        claims.put("refreshToken", "");
+        // p325
+        // JWTUtil을 이용한 토큰생성
+        String accessToken = JWTUtil.generateToken(claims, 10);
+        String refreshToken = JWTUtil.generateToken(claims, 60*24);
+
+        // 토큰값 저장
+        claims.put("accessToken", accessToken); // 토큰값 저장할 곳 생성
+        claims.put("refreshToken", refreshToken);
 
         Gson gson = new Gson();
         String jsonStr = gson.toJson(claims); // json 형태로 변환
