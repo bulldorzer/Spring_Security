@@ -13,14 +13,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
+// p310
 @Getter @Setter
 @ToString
-public class MemeberDTO extends User {
+public class MemberDTO extends User {
     /*
         Spring Security에서 제공하는 기본 사용자 객체
         사용자 인증과 권한을 관리하는데 사용
         User클래스 역할 사용자의 로그인 정보와 권한을 저장하는 역할
-        UserDetail 인터페이스를 상속받아 구현한 클래스임 
+        UserDetail 인터페이스를 상속받아 구현한 클래스임
     */
     private String email;
     private String pw;
@@ -29,12 +30,13 @@ public class MemeberDTO extends User {
 
     private List<String> roleNames = new ArrayList<>();
 
-    public MemeberDTO(String email,String pw, String nickname, boolean social,
-                      List<String> roleNames){
+    public MemberDTO(String email, String pw, String nickname, boolean social,
+                     List<String> roleNames){
 
         // 부모 생성자 호출
         // SimpleGrantedAuthority : 스프링 시큐리티에서 사용자의 권한을 표현하는 클래스
         // 각 권한 앞에 "ROLE_" 글자 붙여서 객체 생성 -> List 형태로 변환
+        // User 생성자 가리킴
         super(
                 email, pw,
                 roleNames.stream()

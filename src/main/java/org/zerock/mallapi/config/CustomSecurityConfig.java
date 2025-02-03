@@ -17,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.zerock.mallapi.security.handler.APILoginFailHandler;
+import org.zerock.mallapi.security.handler.APILoginSuccessHandler;
 
 @Configuration
 @Log4j2
@@ -39,6 +41,16 @@ public class CustomSecurityConfig {
 
         // 3. CSRF 비활성화
         http.csrf(config-> config.disable());
+
+        // p315
+        // 4. 로그인 설정
+        http.formLogin(config -> {
+            config.loginPage("api/member/login"); // 로그인 page url
+            config.successHandler(new APILoginSuccessHandler());
+            config.failureHandler(new APILoginFailHandler());
+
+
+        });
 
         return http.build();
     }
