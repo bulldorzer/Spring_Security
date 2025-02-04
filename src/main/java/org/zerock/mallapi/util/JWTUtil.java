@@ -37,6 +37,7 @@ public class JWTUtil {
         return jwtStr;
     }
 
+    // JWT 검증 메서드
     public static Map<String, Object> validateToken(String token) {
         Map<String, Object> claim = null;
         try{

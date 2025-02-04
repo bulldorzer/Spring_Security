@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
@@ -14,15 +15,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.zerock.mallapi.security.filter.JWTCheckFilter;
 import org.zerock.mallapi.security.handler.APILoginFailHandler;
 import org.zerock.mallapi.security.handler.APILoginSuccessHandler;
+import org.zerock.mallapi.security.handler.CustomAccessDeniedHandler;
 
 @Configuration
 @Log4j2
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class CustomSecurityConfig {
 
     @Bean
@@ -52,6 +57,14 @@ public class CustomSecurityConfig {
 
         });
 
+        // 5. JWT체크 필터 등록
+        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        // 6.
+        http.exceptionHandling(config->{
+            config.accessDeniedHandler(new CustomAccessDeniedHandler());
+        });
+
         return http.build();
     }
 
@@ -62,9 +75,12 @@ public class CustomSecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // 모든 도메인 허용
-        configuration.setAllowedMethods(Arrays.asList("HEAD","GET","POST","PUT","DELETE")); // 허용할 메서드
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control","Content-Type")); // 허용할 헤더 내용
+        // 모든 도메인 허용
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        // 허용할 메서드 default는 get방식만
+        configuration.setAllowedMethods(Arrays.asList("HEAD","GET","POST","PUT","DELETE"));
+        // 허용할 헤더 내용
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control","Content-Type"));
         configuration.setAllowCredentials(true); // 자격 증명오류
 
         // url 기준으로 설정을 적용 할 것임 - 객체 생성하여 적용

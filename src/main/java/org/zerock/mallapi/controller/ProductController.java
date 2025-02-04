@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.mallapi.dto.PageRequestDTO;
@@ -69,6 +70,7 @@ public class ProductController {
 
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')") // 임시로 권한 설정
   @GetMapping("/list")
   public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO) {
 

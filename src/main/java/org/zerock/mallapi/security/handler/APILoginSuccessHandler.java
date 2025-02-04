@@ -33,6 +33,7 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler  {
         // p309
         // 현재 인증된 사용자의 정보를 가져온다
         MemberDTO memberDTO = (MemberDTO)authentication.getPrincipal();
+        // 맵형식으로 사용자 정보가 저장되어있음
         Map<String, Object> claims = memberDTO.getClaims();
 
         // p325
